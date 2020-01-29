@@ -1,7 +1,7 @@
 # Личный проект «Кекстаграм» [![Build status][travis-image]][travis-url]
 
 * Студент: [Евгений Веснин](https://up.htmlacademy.ru/javascript/19/user/661141).
-* Наставник: `Неизвестно`.
+* Наставник: [Алексей Беляев](https://htmlacademy.ru/profile/id691043).
 
 ---
 
