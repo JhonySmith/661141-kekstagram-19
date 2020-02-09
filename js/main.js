@@ -1,5 +1,7 @@
 'use strict';
 
+// Массивы данных
+
 var messages = [
   'Всё отлично!',
   'В целом всё неплохо.Но не всё.',
@@ -11,9 +13,23 @@ var messages = [
 
 var names = ['Петя', 'Саша', 'Аня', 'Коля', 'Даша', 'Вася', 'Настя', 'Катя'];
 
-//  Функция для создания случайных, неповторяющихся значений
+// Необходимые переменные
 
-function shuffle(array) {
+var photos = [];
+
+var picturesBlock = document.querySelector('.pictures');
+
+var photoTemplate = document.querySelector('#picture').content.querySelector('.picture');
+
+// Константы
+
+var PHOTOS_NUMBER = 25;
+
+//  Функции
+
+// функция перемешивания элементов массива
+
+var shuffle = function (array) {
   var currentIndex = array.length;
   var temporaryValue;
   var randomIndex;
@@ -28,37 +44,49 @@ function shuffle(array) {
   }
 
   return array;
-}
+};
 
-var photos = [];
+// функция получения перемешанного массива численных данных
 
-var photoGenerator = function (photoArr) {
-  var photoRandom = [];
+var randomUniqArr = function (lengthUniqArr, uniqArr) {
+  for (var i = 1; i <= lengthUniqArr; i++) {
+    uniqArr.push(i);
+  }
+  shuffle(uniqArr);
+  return uniqArr;
+};
+
+// функция генерации случайных комментариев
+
+var makeCommentsArr = function (clearCommentsArr) {
   var avatarRandom = [];
 
-  for (var i = 1; i < 26; i++) {
-    photoRandom.push(i);
-    shuffle(photoRandom);
+  shuffle(names);
+  randomUniqArr(6, avatarRandom);
+
+  for (var i = 0; i < Math.floor(Math.random() * 4); i++) {
+    clearCommentsArr[i] = {
+      avatar: 'img/avatar-' + avatarRandom[i] + '.svg',
+      message: messages[Math.floor(Math.random() * 6)],
+      name: names[i]
+    };
   }
+  return clearCommentsArr;
+};
 
-  for (var j = 1; j < 7; j++) {
-    avatarRandom.push(j);
-    shuffle(avatarRandom);
-  }
+// функция получения массива данных фотографий
 
-  for (var k = 0; k < 25; k++) {
-    var commentArr = [];
-    shuffle(names);
-    for (var c = 0; c < 4; c++) {
-      commentArr[c] = {
-        avatar: 'img/avatar-' + avatarRandom[c] + '.svg',
-        message: messages[Math.floor(Math.random() * 6)],
-        name: names[c]
-      };
-    }
+var photoGenerator = function (photoArr, photosNumber) {
+  var photoRandom = [];
+  var commentArr = [];
 
-    photoArr[k] = {
-      url: 'photos/' + photoRandom[k] + '.jpg',
+  randomUniqArr(photosNumber, photoRandom);
+
+  for (var i = 0; i < photosNumber; i++) {
+    makeCommentsArr(commentArr);
+
+    photoArr[i] = {
+      url: 'photos/' + photoRandom[i] + '.jpg',
       description: 'Описание фотографии',
       likes: Math.floor(Math.random() * 186) + 15,
       comments: commentArr
@@ -68,29 +96,28 @@ var photoGenerator = function (photoArr) {
   return photoArr;
 };
 
-photoGenerator(photos);
-
-var picturesBlock = document.querySelector('.pictures');
-
-var photoTemplate = document.querySelector('#picture').content.querySelector('.picture');
+// функция отрисовки массива фотографий на странице
 
 var renderPhotos = function (photo) {
-  var photoElement = photoTemplate.cloneNode(true);
+  var fragment = document.createDocumentFragment();
 
-  photoElement.querySelector('.picture__img').src = photo.url;
-  photoElement.querySelector('.picture__likes').textContent =
-    photo.likes;
-  photoElement.querySelector('.picture__comments').textContent =
-    photo.comments.length;
+  for (var i = 0; i < photos.length; i++) {
+    var photoElement = photoTemplate.cloneNode(true);
 
-  return photoElement;
+    photoElement.querySelector('.picture__img').src = photo[i].url;
+    photoElement.querySelector('.picture__likes').textContent =
+      photo[i].likes;
+    photoElement.querySelector('.picture__comments').textContent =
+      photo[i].comments.length;
+
+    fragment.appendChild(photoElement);
+  }
+
+  picturesBlock.appendChild(fragment);
 };
 
-var fragment = document.createDocumentFragment();
+// Исполняемый код
 
-for (var i = 0; i < photos.length; i++) {
-  fragment.appendChild(renderPhotos(photos[i]));
-}
-
-picturesBlock.appendChild(fragment);
+photoGenerator(photos, PHOTOS_NUMBER);
+renderPhotos(photos);
 
