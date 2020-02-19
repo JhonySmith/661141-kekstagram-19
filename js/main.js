@@ -1,7 +1,5 @@
 'use strict';
 
-// Массивы данных
-
 var messages = [
   'Всё отлично!',
   'В целом всё неплохо.Но не всё.',
@@ -120,4 +118,37 @@ var renderPhotos = function (photo) {
 
 photoGenerator(photos, PHOTOS_NUMBER);
 renderPhotos(photos);
+
+var ESC_KEY = 'Escape';
+
+var uploadFile = document.querySelector('#upload-file');
+var photoEditForm = document.querySelector('.img-upload__overlay');
+var photoEditorCloseButton = photoEditForm.querySelector('.img-upload__cancel');
+
+var onPhotoEditorEscPress = function (evt) {
+  if (evt.key === ESC_KEY) {
+    closePhotoEditor();
+  }
+};
+
+var openPhotoEditor = function () {
+  photoEditForm.classList.remove('hidden');
+  document.querySelector('body').classList.add('modal-open');
+  document.addEventListener('keydown', onPhotoEditorEscPress);
+};
+
+var closePhotoEditor = function () {
+  photoEditForm.classList.add('hidden');
+  document.removeEventListener('keydown', onPhotoEditorEscPress);
+  document.querySelector('body').classList.remove('modal-open');
+  uploadFile.value = null;
+};
+
+uploadFile.addEventListener('change', function () {
+  openPhotoEditor();
+});
+
+photoEditorCloseButton.addEventListener('click', function () {
+  closePhotoEditor();
+});
 
