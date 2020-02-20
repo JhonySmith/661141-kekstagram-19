@@ -170,14 +170,29 @@ effectChrome.addEventListener('click', function () {
 
 var uploadHashtags = photoEditForm.querySelector('.text__hashtags');
 
-var hastagsArray = []
+var hastagsArray = [];
 
-uploadHashtags.addEventListener('change', function () {
-  hastagsArray = [];
+uploadHashtags.addEventListener('change', function (evt) {
+  var target = evt.target;
+  var validation = true;
   hastagsArray = uploadHashtags.value.split(' ');
   for (var i = 0; i < hastagsArray.length; i++) {
     if (hastagsArray[i][0] !== '#') {
-      console.log('error');
+      validation = false;
     }
   }
+
+  if (hastagsArray.length > 5) {
+    target.setCustomValidity('Слишком много хэштэгов');
+  } else {
+    target.setCustomValidity('');
+  }
+
+  if (!validation) {
+    target.setCustomValidity('Хэштэг должен начинаться с #');
+  } else {
+    target.setCustomValidity('');
+  }
+
 });
+
