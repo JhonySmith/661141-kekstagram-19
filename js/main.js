@@ -168,31 +168,67 @@ effectChrome.addEventListener('click', function () {
 
 });
 
-var uploadHashtags = photoEditForm.querySelector('.text__hashtags');
 
 var hastagsArray = [];
+var uploadHashtags = photoEditForm.querySelector('.text__hashtags');
 
-uploadHashtags.addEventListener('change', function (evt) {
-  var target = evt.target;
-  var validation = true;
-  hastagsArray = uploadHashtags.value.split(' ');
-  for (var i = 0; i < hastagsArray.length; i++) {
-    if (hastagsArray[i][0] !== '#') {
-      validation = false;
+
+function CustomValidation() { }
+
+CustomValidation.prototype = {
+  invalidities: [],
+
+  checkValidity: function (input) {
+    var validity = input.validity;
+
+    if (validity.rangeOverflow) {
+      this.addInvalidity('The maximum value should be ');
     }
+
+    if (validity.tooShort) {
+      this.addInvalidity('The minimum value should be ');
+    }
+
+    if (validity.stepMismatch) {
+      this.addInvalidity('This number needs to be a multiple of ');
+    }
+  },
+
+  addInvalidity: function (message) {
+    this.invalidities.push(message);
+  },
+
+  getInvalidities: function () {
+    return this.invalidities.join('. \n');
+  }
+};
+
+
+CustomValidation.prototype.checkValidity = function (input) {
+
+  if (input.value === '333') {
+    this.addInvalidity('At least 1 lowercase letter is required');
   }
 
-  if (hastagsArray.length > 5) {
-    target.setCustomValidity('Слишком много хэштэгов');
+};
+
+
+var checkingValidationHastags = function (hastags) {
+  if (hastags.value)
+}
+
+hastagsArray = uploadHashtags.value.split(' ');
+
+var subsub = photoEditForm.querySelector('.img-upload__submit');
+
+uploadHashtags.addEventListener('input', function (evt) {
+  var target = evt.target;
+  if (target.value === '333') {
+    target.setCustomValidity('zaz');
+  } else if (target.value === '222') {
+    target.setCustomValidity('aaaa');
   } else {
     target.setCustomValidity('');
   }
-
-  if (!validation) {
-    target.setCustomValidity('Хэштэг должен начинаться с #');
-  } else {
-    target.setCustomValidity('');
-  }
-
 });
 
