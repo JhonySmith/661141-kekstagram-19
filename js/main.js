@@ -168,65 +168,86 @@ effectChrome.addEventListener('click', function () {
 
 });
 
-
-var hastagsArray = [];
 var uploadHashtags = photoEditForm.querySelector('.text__hashtags');
-
-
-function CustomValidation() { }
-
-CustomValidation.prototype = {
-  invalidities: [],
-
-  checkValidity: function (input) {
-    var validity = input.validity;
-
-    if (validity.rangeOverflow) {
-      this.addInvalidity('The maximum value should be ');
-    }
-
-    if (validity.tooShort) {
-      this.addInvalidity('The minimum value should be ');
-    }
-
-    if (validity.stepMismatch) {
-      this.addInvalidity('This number needs to be a multiple of ');
-    }
-  },
-
-  addInvalidity: function (message) {
-    this.invalidities.push(message);
-  },
-
-  getInvalidities: function () {
-    return this.invalidities.join('. \n');
-  }
-};
-
-
-CustomValidation.prototype.checkValidity = function (input) {
-
-  if (input.value === '333') {
-    this.addInvalidity('At least 1 lowercase letter is required');
-  }
-
-};
-
+var REG_EXP = /[$%&'*+/=?^_`{|}.,]/;
 
 var checkingValidationHastags = function (hastags) {
-  if (hastags.value)
-}
+  var invalText = [];
+  var hashtagsElements = hastags.value.split(' ');
+  var sumValidation = {
+    haveHashtags: true,
+    onlyHashtag: false,
+    noSpace: false,
+    repHas: false,
+    regExp: false,
+    tooLong: false
+  };
 
-hastagsArray = uploadHashtags.value.split(' ');
+  for (var i = 0; i < hashtagsElements.length; i++) {
+    if (hashtagsElements[i][0] !== '#') {
+      sumValidation.haveHashtags = false;
+    }
 
-var subsub = photoEditForm.querySelector('.img-upload__submit');
+    if (hashtagsElements[i] === '#') {
+      sumValidation.onlyHashtag = true;
+    }
+
+    if (hashtagsElements[i].length > 20) {
+      sumValidation.tooLong = true;
+    }
+
+    for (var j = 1; j < hashtagsElements[i].length; j++) {
+      if (hashtagsElements[i][j] === '#') {
+        sumValidation.noSpace = true;
+      }
+    }
+
+    for (var k = i + 1; k < hashtagsElements.length; k++) {
+      if (hashtagsElements[i].toLowerCase() === hashtagsElements[k].toLowerCase()) {
+        sumValidation.repHas = true;
+      }
+    }
+
+  }
+
+  if (!sumValidation.haveHashtags) {
+    invalText.push('Хэштэги должны начинаться с #');
+  }
+  if (sumValidation.onlyHashtag) {
+    invalText.push('Хэштэги не могут состоять только из #');
+  }
+
+  if (sumValidation.noSpace) {
+    invalText.push('Хэштэги должны быть разделены пробелами');
+  }
+
+  if (hashtagsElements.length > 5) {
+    invalText.push('Нельзя указывать больше пяти хэш-тегов');
+  }
+
+  if (sumValidation.tooLong) {
+    invalText.push('Максимальная длина одного хэш-тега 20 символов, включая решётку');
+  }
+
+  if (sumValidation.repHas) {
+    invalText.push('Нельзя использовать повторяющиеся хэштэги');
+  }
+
+  if (REG_EXP.test(hastags.value)) {
+    invalText.push('Нельзя использовать спецсимволы');
+  }
+
+  if (invalText.length !== 0) {
+    return invalText.join('. \n');
+  } else {
+    return '';
+  }
+};
 
 uploadHashtags.addEventListener('input', function (evt) {
   var target = evt.target;
-  if (target.value === '333') {
-    target.setCustomValidity('zaz');
-  } else if (target.value === '222') {
-    target.setCustomValidity('aaaa');
+  if (checkingValidationHastags(uploadHashtags) !== '') {
+    target.setCustomValidity(checkingValidationHastags(uploadHashtags));
   } else {
     target.setCustomValidity('');
   }
