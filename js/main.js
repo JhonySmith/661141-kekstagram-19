@@ -173,7 +173,7 @@ var REG_EXP = /[$%&'*+/=?^_`{|}.,]/;
 
 var checkingValidationHastags = function (hastags) {
   var invalText = [];
-  var hashtagsElements = hastags.value.split(' ');
+  var hashtagsElements = hastags.value.trim().split(/\s/);
   var sumValidation = {
     haveHashtags: true,
     onlyHashtag: false,
