@@ -1,7 +1,5 @@
 'use strict';
 
-// Массивы данных
-
 var messages = [
   'Всё отлично!',
   'В целом всё неплохо.Но не всё.',
@@ -120,4 +118,138 @@ var renderPhotos = function (photo) {
 
 photoGenerator(photos, PHOTOS_NUMBER);
 renderPhotos(photos);
+
+var ESC_KEY = 'Escape';
+
+var uploadFile = document.querySelector('#upload-file');
+var photoEditForm = document.querySelector('.img-upload__overlay');
+var photoEditorCloseButton = photoEditForm.querySelector('.img-upload__cancel');
+var effectLevelPin = photoEditForm.querySelector('.effect-level__pin');
+var imgUploadPreview = photoEditForm.querySelector('.img-upload__preview img');
+var effectLevelDepth = photoEditForm.querySelector('.effect-level__depth');
+var effectLevelLine = photoEditForm.querySelector('.effect-level__line');
+
+var onPhotoEditorEscPress = function (evt) {
+  if (evt.key === ESC_KEY) {
+    closePhotoEditor();
+  }
+};
+
+var openPhotoEditor = function () {
+  photoEditForm.classList.remove('hidden');
+  document.querySelector('body').classList.add('modal-open');
+  document.addEventListener('keydown', onPhotoEditorEscPress);
+};
+
+var closePhotoEditor = function () {
+  photoEditForm.classList.add('hidden');
+  document.removeEventListener('keydown', onPhotoEditorEscPress);
+  document.querySelector('body').classList.remove('modal-open');
+  uploadFile.value = null;
+};
+
+uploadFile.addEventListener('change', function () {
+  openPhotoEditor();
+});
+
+photoEditorCloseButton.addEventListener('click', function () {
+  closePhotoEditor();
+});
+
+var effectChrome = photoEditForm.querySelector('.effects__preview--chrome');
+
+effectChrome.addEventListener('click', function () {
+  imgUploadPreview.style.filter = 'grayscale(0.9)';
+
+  effectLevelPin.addEventListener('mouseup', function () {
+    var wdd = (Math.round(effectLevelDepth.offsetWidth / effectLevelLine.offsetWidth * 10)) / 10;
+    imgUploadPreview.style.filter = 'grayscale(' + wdd + ')';
+  });
+
+});
+
+var uploadHashtags = photoEditForm.querySelector('.text__hashtags');
+var REG_EXP = /[$%&'*+/=?^_`{|}.,]/;
+
+var checkingValidationHastags = function (hastags) {
+  var invalText = [];
+  var hashtagsElements = hastags.value.trim().split(/\s/);
+  var sumValidation = {
+    haveHashtags: true,
+    onlyHashtag: false,
+    noSpace: false,
+    repHas: false,
+    regExp: false,
+    tooLong: false
+  };
+
+  for (var i = 0; i < hashtagsElements.length; i++) {
+    if (hashtagsElements[i][0] !== '#') {
+      sumValidation.haveHashtags = false;
+    }
+
+    if (hashtagsElements[i] === '#') {
+      sumValidation.onlyHashtag = true;
+    }
+
+    if (hashtagsElements[i].length > 20) {
+      sumValidation.tooLong = true;
+    }
+
+    for (var j = 1; j < hashtagsElements[i].length; j++) {
+      if (hashtagsElements[i][j] === '#') {
+        sumValidation.noSpace = true;
+      }
+    }
+
+    for (var k = i + 1; k < hashtagsElements.length; k++) {
+      if (hashtagsElements[i].toLowerCase() === hashtagsElements[k].toLowerCase()) {
+        sumValidation.repHas = true;
+      }
+    }
+
+  }
+
+  if (!sumValidation.haveHashtags) {
+    invalText.push('Хэштэги должны начинаться с #');
+  }
+  if (sumValidation.onlyHashtag) {
+    invalText.push('Хэштэги не могут состоять только из #');
+  }
+
+  if (sumValidation.noSpace) {
+    invalText.push('Хэштэги должны быть разделены пробелами');
+  }
+
+  if (hashtagsElements.length > 5) {
+    invalText.push('Нельзя указывать больше пяти хэш-тегов');
+  }
+
+  if (sumValidation.tooLong) {
+    invalText.push('Максимальная длина одного хэш-тега 20 символов, включая решётку');
+  }
+
+  if (sumValidation.repHas) {
+    invalText.push('Нельзя использовать повторяющиеся хэштэги');
+  }
+
+  if (REG_EXP.test(hastags.value)) {
+    invalText.push('Нельзя использовать спецсимволы');
+  }
+
+  if (invalText.length !== 0) {
+    return invalText.join('. \n');
+  } else {
+    return '';
+  }
+};
+
+uploadHashtags.addEventListener('input', function (evt) {
+  var target = evt.target;
+  if (checkingValidationHastags(uploadHashtags) !== '') {
+    target.setCustomValidity(checkingValidationHastags(uploadHashtags));
+  } else {
+    target.setCustomValidity('');
+  }
+});
 
