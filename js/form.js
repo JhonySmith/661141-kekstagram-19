@@ -32,13 +32,8 @@
     uploadFile.value = null;
   };
 
-  uploadFile.addEventListener('change', function () {
-    openPhotoEditor();
-  });
-
-  photoEditorCloseButton.addEventListener('click', function () {
-    closePhotoEditor();
-  });
+  uploadFile.addEventListener('change', openPhotoEditor);
+  photoEditorCloseButton.addEventListener('click', closePhotoEditor);
 
   var effectChrome = photoEditForm.querySelector('.effects__preview--chrome');
 
@@ -61,11 +56,15 @@
     }
   });
 
-  uploadComment.addEventListener('focus', function () {
+  var onFocusField = function () {
     document.removeEventListener('keydown', onPhotoEditorEscPress);
-  });
+  };
 
-  uploadComment.addEventListener('blur', function () {
+  var onBlurField = function () {
     document.addEventListener('keydown', onPhotoEditorEscPress);
-  });
+  };
+
+  uploadComment.addEventListener('focus', onFocusField);
+  uploadComment.addEventListener('blur', onBlurField);
+
 }());
