@@ -73,17 +73,19 @@
     });
   });
 
-  bigPictureClose.addEventListener('click', function () {
-    closeBigPicture();
-  });
+  bigPictureClose.addEventListener('click', closeBigPicture);
 
   var commentAddText = bigPicture.querySelector('.social__footer-text');
 
-  commentAddText.addEventListener('blur', function () {
-    document.addEventListener('keydown', onBigPictureEscPress);
-  });
-
-  commentAddText.addEventListener('focus', function () {
+  var onFocusField = function () {
     document.removeEventListener('keydown', onBigPictureEscPress);
-  });
+  };
+
+  var onBlurField = function () {
+    document.addEventListener('keydown', onBigPictureEscPress);
+  };
+
+  commentAddText.addEventListener('blur', onBlurField);
+  commentAddText.addEventListener('focus', onFocusField);
+
 }());
