@@ -45,7 +45,7 @@
     return uniqArr;
   };
 
-  var photoGenerator = function (photoArr, photosNumber) {
+  var makePhotoArr = function (photoArr, photosNumber) {
     var photoRandom = [];
     var commentArr = [];
 
@@ -87,6 +87,6 @@
   };
 
   window.data = {
-    photoGenerator: photoGenerator
+    makePhotoArr: makePhotoArr
   };
 })();

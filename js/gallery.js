@@ -27,7 +27,7 @@
     picturesBlock.appendChild(fragment);
   };
 
-  window.data.photoGenerator(photos, PHOTOS_NUMBER);
+  window.data.makePhotoArr(photos, PHOTOS_NUMBER);
   renderPhotos(photos);
 
   window.gallery = {
