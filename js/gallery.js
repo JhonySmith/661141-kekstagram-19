@@ -1,18 +1,14 @@
 'use strict';
 
 (function () {
-  var PHOTOS_NUMBER = 25;
-
-  var photos = [];
 
   var picturesBlock = document.querySelector('.pictures');
-
   var photoTemplate = document.querySelector('#picture').content.querySelector('.picture');
 
-  var renderPhotos = function (photo) {
+  var successHandler = function (photo) {
     var fragment = document.createDocumentFragment();
 
-    for (var i = 0; i < photos.length; i++) {
+    for (var i = 0; i < photo.length; i++) {
       var photoElement = photoTemplate.cloneNode(true);
 
       photoElement.querySelector('.picture__img').src = photo[i].url;
@@ -25,12 +21,11 @@
     }
 
     picturesBlock.appendChild(fragment);
+
+    var mainPictures = document.querySelectorAll('.picture');
+
+    window.preview.onGalleryPhoto(mainPictures, photo);
   };
 
-  window.data.makePhotoArr(photos, PHOTOS_NUMBER);
-  renderPhotos(photos);
-
-  window.gallery = {
-    photos: photos
-  };
+  window.backend.load(successHandler);
 }());
