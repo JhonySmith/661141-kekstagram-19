@@ -9,6 +9,7 @@
   var photoEditFormElements = {
     close: photoEditForm.querySelector('.img-upload__cancel'),
     effectLevel: photoEditForm.querySelector('.effect-level'),
+    form: document.querySelector('.img-upload__form'),
     effectLevelPin: photoEditForm.querySelector('.effect-level__pin'),
     imgUploadPreview: photoEditForm.querySelector('.img-upload__preview img'),
     effectLevelDepth: photoEditForm.querySelector('.effect-level__depth'),
@@ -176,5 +177,82 @@
     document.addEventListener('mouseup', onMouseUp);
 
   });
+
+  var successSendTemplate = document.querySelector('#success').content.querySelector('.success');
+  var errorSendTemplate = document.querySelector('#error').content.querySelector('.error');
+
+  var onSuccessMessageEscPress = function (evt) {
+    if (evt.key === ESC_KEY) {
+      closeSuccessMessage();
+    }
+  };
+
+  var onErrorMessageEscPress = function (evt) {
+    if (evt.key === ESC_KEY) {
+      closeErrorMessage();
+    }
+  };
+
+  var onSuccessMessageMissClick = function (evt) {
+    if (evt.target !== document.querySelector('.success').querySelector('.success__inner')) {
+      closeSuccessMessage();
+    }
+  };
+
+  var onErrorMessageMissClick = function (evt) {
+    if (evt.target !== document.querySelector('.error').querySelector('.error__inner')) {
+      closeErrorMessage();
+    }
+  };
+
+  var closeSuccessMessage = function () {
+    document.removeEventListener('keydown', onSuccessMessageEscPress);
+    document.removeEventListener('click', onSuccessMessageMissClick);
+    document.querySelector('body').classList.remove('modal-open');
+    document.querySelector('.success').remove();
+  };
+
+  var closeErrorMessage = function () {
+    document.removeEventListener('keydown', onErrorMessageEscPress);
+    document.removeEventListener('click', onErrorMessageMissClick);
+    document.querySelector('body').classList.remove('modal-open');
+    document.querySelector('.error').remove();
+  };
+
+
+  var onSendSuccess = function () {
+    var fragment = document.createDocumentFragment();
+    var successElement = successSendTemplate.cloneNode(true);
+    fragment.appendChild(successElement);
+    document.querySelector('main').appendChild(fragment);
+
+    document.addEventListener('keydown', onSuccessMessageEscPress);
+    document.addEventListener('click', onSuccessMessageMissClick);
+    photoEditForm.classList.add('hidden');
+
+    var closeButton = document.querySelector('.success').querySelector('.success__button');
+    closeButton.addEventListener('click', closeSuccessMessage);
+  };
+
+  var onSendError = function () {
+    var fragment = document.createDocumentFragment();
+    var errorElement = errorSendTemplate.cloneNode(true);
+    fragment.appendChild(errorElement);
+    document.querySelector('main').appendChild(fragment);
+
+    document.addEventListener('keydown', onErrorMessageEscPress);
+    document.addEventListener('click', onErrorMessageMissClick);
+    photoEditForm.classList.add('hidden');
+
+    var closeButton = document.querySelector('.error').querySelector('.error__button');
+    closeButton.addEventListener('click', closeErrorMessage);
+  };
+
+  var onDataSend = function (evt) {
+    window.backend.send(new FormData(photoEditFormElements.form), onSendSuccess, onSendError);
+    evt.preventDefault();
+  };
+
+  photoEditFormElements.form.addEventListener('submit', onDataSend);
 
 }());
