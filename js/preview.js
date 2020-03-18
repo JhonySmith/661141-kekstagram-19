@@ -16,7 +16,8 @@
     commentsLoader: previewWindow.querySelector('.comments-loader'),
     commentsList: previewWindow.querySelector('.social__comments'),
     commentItem: previewWindow.querySelector('.social__comment'),
-    commentTextAdd: previewWindow.querySelector('.social__footer-text')
+    commentTextAdd: previewWindow.querySelector('.social__footer-text'),
+    description: previewWindow.querySelector('.social__caption')
   };
 
   preview.commentsCount.classList.add('hidden');
@@ -68,6 +69,7 @@
 
       preview.img.src = photo.url;
       preview.likes.textContent = photo.like;
+      preview.description.textContent = photo.description;
 
       for (var i = 0; i < photo.comments.length; i++) {
         var photoComment = preview.commentItem.cloneNode(true);
