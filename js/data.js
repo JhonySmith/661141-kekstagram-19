@@ -37,8 +37,8 @@
 
   // Функция получения перемешанного массива численных данных
 
-  var randomUniqArr = function (lengthUniqArr, uniqArr) {
-    for (var i = 1; i <= lengthUniqArr; i++) {
+  var randomUniqArr = function (uniqArr) {
+    for (var i = 1; i <= uniqArr.length; i++) {
       uniqArr.push(i);
     }
     shuffle(uniqArr);
@@ -87,6 +87,8 @@
   };
 
   window.data = {
-    makePhotoArr: makePhotoArr
+    makePhotoArr: makePhotoArr,
+    randomUniqArr: randomUniqArr,
+    shuffle: shuffle
   };
 })();
