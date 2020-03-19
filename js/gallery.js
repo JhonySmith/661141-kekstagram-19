@@ -22,7 +22,7 @@
 
   var onDefaultButton = function () {
     if (lastTimeout) {
-      window.clearTimeout(lastTimeout)
+      window.clearTimeout(lastTimeout);
     }
     lastTimeout = window.setTimeout(function () {
       clearAllPhotos();
