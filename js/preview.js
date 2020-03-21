@@ -33,6 +33,7 @@
     previewWindow.classList.remove('hidden');
     document.querySelector('body').classList.add('modal-open');
     document.addEventListener('keydown', onBigPictureEscPress);
+    commentsLoader.addEventListener('click', onCommentsLoader);
   };
 
   // Функция закрытия окна
@@ -69,8 +70,6 @@
     commentsNumber = commentsNumber + 5;
     commentLoad(photosArr, commentsNumber);
   };
-
-  commentsLoader.addEventListener('click', onCommentsLoader);
 
   var commentLoad = function (commentsFrom, number) {
     var fragment = document.createDocumentFragment();
