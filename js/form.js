@@ -2,9 +2,20 @@
 
 (function () {
   var ESC_KEY = 'Escape';
+  var FILE_TYPES = ['gif', 'jpg', 'jpeg', 'png'];
+  var MAX_SCALE = 100;
+  var MIN_SCALE = 25;
+  var SCALE_STEP = 25;
 
   var uploadFile = document.querySelector('#upload-file');
   var photoEditForm = document.querySelector('.img-upload__overlay');
+  var miniPhotos = document.querySelectorAll('.effects__preview');
+  var scale = {
+    caption: document.querySelector('.scale__control--value'),
+    biggerButton: document.querySelector('.scale__control--bigger'),
+    smallerButton: document.querySelector('.scale__control--smaller')
+  };
+
 
   var photoEditFormElements = {
     close: photoEditForm.querySelector('.img-upload__cancel'),
@@ -25,16 +36,79 @@
   };
 
   var openPhotoEditor = function () {
+    loadFile();
+
+    scale.caption.value = '100%';
     photoEditForm.classList.remove('hidden');
     document.querySelector('body').classList.add('modal-open');
     document.addEventListener('keydown', onPhotoEditorEscPress);
+    scale.biggerButton.addEventListener('click', onBiggerButton);
+    scale.smallerButton.addEventListener('click', onLessButton);
     makeEffect();
   };
 
+  var loadFile = function () {
+    var file = uploadFile.files[0];
+    var fileName = file.name.toLowerCase();
+
+    var matches = FILE_TYPES.some(function (it) {
+      return fileName.endsWith(it);
+    });
+
+    if (matches) {
+      var reader = new FileReader();
+
+      var onLoadFile = function () {
+        photoEditFormElements.imgUploadPreview.src = reader.result;
+        miniPhotos.forEach(function (el) {
+          el.style.backgroundImage = 'url(' + reader.result + ')';
+        });
+      };
+
+      reader.addEventListener('load', onLoadFile);
+      reader.readAsDataURL(file);
+    }
+  };
+
+  var rescalePhoto = function (scaleCaption) {
+    if (scaleCaption !== MAX_SCALE) {
+      photoEditFormElements.imgUploadPreview.style.transform = 'scale(0.' + scaleCaption + ')';
+    } else {
+      photoEditFormElements.imgUploadPreview.style.transform = 'none';
+    }
+  };
+
+  var onBiggerButton = function () {
+    var currentScaleCaption = parseInt(scale.caption.value, 10);
+    if (currentScaleCaption < MAX_SCALE) {
+      currentScaleCaption = currentScaleCaption + SCALE_STEP;
+      rescalePhoto(currentScaleCaption);
+      scale.caption.value = currentScaleCaption + '%';
+    }
+  };
+
+  var onLessButton = function () {
+    var currentScaleCaption = parseInt(scale.caption.value, 10);
+    if (currentScaleCaption > MIN_SCALE) {
+      currentScaleCaption = currentScaleCaption - SCALE_STEP;
+      rescalePhoto(currentScaleCaption);
+      scale.caption.value = currentScaleCaption + '%';
+    }
+  };
+
+  // Закрытие формы
   var closePhotoEditor = function () {
     photoEditForm.classList.add('hidden');
-    document.removeEventListener('keydown', onPhotoEditorEscPress);
     document.querySelector('body').classList.remove('modal-open');
+
+    // Удаление слушателей событий на форме
+    document.removeEventListener('keydown', onPhotoEditorEscPress);
+    scale.biggerButton.removeEventListener('click', onBiggerButton);
+    scale.smallerButton.removeEventListener('click', onLessButton);
+    effectsList.forEach(function (el) {
+      el.removeEventListener('click', makeEffect);
+    });
+
     uploadFile.value = null;
   };
 
@@ -60,6 +134,8 @@
 
   photoEditFormElements.hashtags.addEventListener('focus', onFocusField);
   photoEditFormElements.hashtags.addEventListener('blur', onBlurField);
+  photoEditFormElements.comment.addEventListener('focus', onFocusField);
+  photoEditFormElements.comment.addEventListener('blur', onBlurField);
 
   var effectsList = document.querySelectorAll('input[name=effect]');
   var effectLevel = document.querySelector('.img-upload__effect-level');
@@ -117,34 +193,40 @@
 
     switch (true) {
       case (effectsList[0].checked):
-        effectLevel.style.display = 'none';
+        effectLevel.style.visibility = 'hidden';
         photoEditFormElements.imgUploadPreview.style.filter = effects.none.filterName;
         break;
       case (effectsList[1].checked):
-        effectLevel.style.display = 'block';
+        effectLevel.style.visibility = 'visible';
         photoEditFormElements.imgUploadPreview.style.filter = effects.chrome.filterName + '(' + effectNumber + ')';
         break;
       case (effectsList[2].checked):
-        effectLevel.style.display = 'block';
+        effectLevel.style.visibility = 'visible';
         photoEditFormElements.imgUploadPreview.style.filter = effects.sepia.filterName + '(' + effectNumber + ')';
         break;
       case (effectsList[3].checked):
-        effectLevel.style.display = 'block';
+        effectLevel.style.visibility = 'visible';
         photoEditFormElements.imgUploadPreview.style.filter = effects.marvin.filterName + '(' + effectNumber * effects.marvin.valueMax + effects.marvin.unit + ')';
         break;
       case (effectsList[4].checked):
-        effectLevel.style.display = 'block';
+        effectLevel.style.visibility = 'visible';
         photoEditFormElements.imgUploadPreview.style.filter = effects.phobos.filterName + '(' + effectNumber * effects.phobos.valueMax + effects.phobos.unit + ')';
         break;
       case (effectsList[5].checked):
-        effectLevel.style.display = 'block';
-        photoEditFormElements.imgUploadPreview.style.filter = effects.heat.name + '(' + effectNumber * effects.heat.valueMax + ')';
+        effectLevel.style.visibility = 'visible';
+        photoEditFormElements.imgUploadPreview.style.filter = effects.heat.filterName + '(' + effectNumber * effects.heat.valueMax + ')';
         break;
     }
   };
 
+  var onEffectList = function () {
+    photoEditFormElements.effectLevelPin.style.left = photoEditFormElements.effectLevelLine.offsetWidth + 'px';
+    photoEditFormElements.effectLevelDepth.style.width = photoEditFormElements.effectLevelLine.offsetWidth + 'px';
+    makeEffect();
+  };
+
   effectsList.forEach(function (el) {
-    el.addEventListener('click', makeEffect);
+    el.addEventListener('click', onEffectList);
   });
 
   photoEditFormElements.effectLevelPin.addEventListener('mousedown', function (evt) {
@@ -250,9 +332,12 @@
 
   var onDataSend = function (evt) {
     window.backend.send(new FormData(photoEditFormElements.form), onSendSuccess, onSendError);
+    photoEditFormElements.hashtags.value = '';
+    photoEditFormElements.comment.value = '';
+    effectsList[0].checked = true;
+    photoEditFormElements.imgUploadPreview.style.transform = 'none';
     evt.preventDefault();
   };
 
   photoEditFormElements.form.addEventListener('submit', onDataSend);
-
 }());
