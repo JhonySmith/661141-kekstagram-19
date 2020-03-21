@@ -3,7 +3,7 @@
 (function () {
   var ESC_KEY = 'Escape';
   var ENTER_KEY = 'Enter';
-
+  var photosArr;
   // Окно просмотра
   var previewWindow = document.querySelector('.big-picture');
 
@@ -12,16 +12,14 @@
     close: previewWindow.querySelector('.big-picture__cancel'),
     img: previewWindow.querySelector('img'),
     likes: previewWindow.querySelector('.likes-count'),
-    commentsCount: previewWindow.querySelector('.social__comment-count'),
+    socialCommentsCount: previewWindow.querySelector('.social__comment-count'),
     commentsLoader: previewWindow.querySelector('.comments-loader'),
     commentsList: previewWindow.querySelector('.social__comments'),
     commentItem: previewWindow.querySelector('.social__comment'),
     commentTextAdd: previewWindow.querySelector('.social__footer-text'),
-    description: previewWindow.querySelector('.social__caption')
+    description: previewWindow.querySelector('.social__caption'),
+    commentsCount: previewWindow.querySelector('.comments-count')
   };
-
-  preview.commentsCount.classList.add('hidden');
-  preview.commentsLoader.classList.add('hidden');
 
   // Обработка нажатия ESC на окне просмотра - закрытие окна
   var onBigPictureEscPress = function (evt) {
@@ -42,6 +40,9 @@
     previewWindow.classList.add('hidden');
     document.removeEventListener('keydown', onBigPictureEscPress);
     document.querySelector('body').classList.remove('modal-open');
+    commentsNumber = 5;
+    preview.commentsLoader.classList.remove('hidden');
+    commentsLoader.removeEventListener('click', onCommentsLoader);
   };
 
   // Обработчик события - нажатие на крестик
@@ -61,30 +62,52 @@
   preview.commentTextAdd.addEventListener('blur', onBlurField);
   preview.commentTextAdd.addEventListener('focus', onFocusField);
 
+  var commentsNumber = 5;
+  var commentsLoader = document.querySelector('.comments-loader');
+
+  var onCommentsLoader = function () {
+    commentsNumber = commentsNumber + 5;
+    commentLoad(photosArr, commentsNumber);
+  };
+
+  commentsLoader.addEventListener('click', onCommentsLoader);
+
+  var commentLoad = function (commentsFrom, number) {
+    var fragment = document.createDocumentFragment();
+
+    var lastCommentIndex = commentsFrom.comments.length;
+    var actualEndIndex = Math.min(lastCommentIndex, number);
+
+    if (actualEndIndex === lastCommentIndex) {
+      preview.commentsLoader.classList.add('hidden');
+    }
+
+    for (var i = 0; i < actualEndIndex; i++) {
+      var photoComment = preview.commentItem.cloneNode(true);
+      preview.socialCommentsCount.textContent = actualEndIndex + ' из ' + lastCommentIndex + ' комментарев';
+
+      photoComment.querySelector('.social__picture').src = commentsFrom.comments[i].avatar;
+      photoComment.querySelector('.social__picture').alt = commentsFrom.comments[i].name;
+      photoComment.querySelector('.social__text').textContent = commentsFrom.comments[i].message;
+      fragment.appendChild(photoComment);
+    }
+    var photoCommentsList = preview.commentsList.querySelectorAll('.social__comment');
+    photoCommentsList.forEach(function (el) {
+      el.remove();
+    }
+    );
+    preview.commentsList.appendChild(fragment);
+  };
+
   // Функция добавления события на мини-фото галлереи и открытие окна просмотра
   var onGalleryPhoto = function (pictures, photos) {
-
     var previewPhotoLoader = function (photo) {
-      var fragment = document.createDocumentFragment();
-
+      photosArr = photo;
       preview.img.src = photo.url;
       preview.likes.textContent = photo.like;
       preview.description.textContent = photo.description;
 
-      for (var i = 0; i < photo.comments.length; i++) {
-        var photoComment = preview.commentItem.cloneNode(true);
-
-        photoComment.querySelector('.social__picture').src = photo.comments[i].avatar;
-        photoComment.querySelector('.social__picture').alt = photo.comments[i].name;
-        photoComment.querySelector('.social__text').textContent = photo.comments[i].message;
-        fragment.appendChild(photoComment);
-      }
-      var photoCommentsList = preview.commentsList.querySelectorAll('.social__comment');
-      photoCommentsList.forEach(function (el) {
-        el.remove();
-      }
-      );
-      preview.commentsList.appendChild(fragment);
+      commentLoad(photo, commentsNumber);
 
       openBigPicture();
     };
