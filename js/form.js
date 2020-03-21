@@ -276,7 +276,4 @@
   };
 
   photoEditFormElements.form.addEventListener('submit', onDataSend);
-
-
-
 }());
