@@ -2,9 +2,12 @@
 
 (function () {
   var ESC_KEY = 'Escape';
+  var FILE_TYPES = ['gif', 'jpg', 'jpeg', 'png'];
 
   var uploadFile = document.querySelector('#upload-file');
   var photoEditForm = document.querySelector('.img-upload__overlay');
+  var miniPhotos = document.querySelectorAll('.effects__preview');
+
 
   var photoEditFormElements = {
     close: photoEditForm.querySelector('.img-upload__cancel'),
@@ -25,6 +28,25 @@
   };
 
   var openPhotoEditor = function () {
+    var file = uploadFile.files[0];
+    var fileName = file.name.toLowerCase();
+
+    var matches = FILE_TYPES.some(function (it) {
+      return fileName.endsWith(it);
+    });
+
+    if (matches) {
+      var reader = new FileReader();
+
+      reader.addEventListener('load', function () {
+        photoEditFormElements.imgUploadPreview.src = reader.result;
+        miniPhotos.forEach(function (el) {
+          el.style.backgroundImage = 'url(' + reader.result + ')';
+        });
+      });
+      reader.readAsDataURL(file);
+    }
+
     photoEditForm.classList.remove('hidden');
     document.querySelector('body').classList.add('modal-open');
     document.addEventListener('keydown', onPhotoEditorEscPress);
@@ -138,7 +160,7 @@
         break;
       case (effectsList[5].checked):
         effectLevel.style.display = 'block';
-        photoEditFormElements.imgUploadPreview.style.filter = effects.heat.name + '(' + effectNumber * effects.heat.valueMax + ')';
+        photoEditFormElements.imgUploadPreview.style.filter = effects.heat.filterName + '(' + effectNumber * effects.heat.valueMax + ')';
         break;
     }
   };
@@ -254,5 +276,7 @@
   };
 
   photoEditFormElements.form.addEventListener('submit', onDataSend);
+
+
 
 }());
