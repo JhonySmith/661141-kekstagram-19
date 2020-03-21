@@ -70,12 +70,12 @@
     } else {
       photoEditFormElements.imgUploadPreview.style.transform = 'none';
     }
-  }
+  };
 
   var onBiggerButton = function () {
     var currentScaleCaption = parseInt(scale.caption.value, 10);
     if (currentScaleCaption < MAX_SCALE) {
-      currentScaleCaption = currentScaleCaption + 25;
+      currentScaleCaption = currentScaleCaption + SCALE_STEP;
       rescalePhoto(currentScaleCaption);
       scale.caption.value = currentScaleCaption + '%';
     }
@@ -84,7 +84,7 @@
   var onLessButton = function () {
     var currentScaleCaption = parseInt(scale.caption.value, 10);
     if (currentScaleCaption > MIN_SCALE) {
-      currentScaleCaption = currentScaleCaption - 25;
+      currentScaleCaption = currentScaleCaption - SCALE_STEP;
       rescalePhoto(currentScaleCaption);
       scale.caption.value = currentScaleCaption + '%';
     }
