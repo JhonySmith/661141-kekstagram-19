@@ -3,10 +3,18 @@
 (function () {
   var ESC_KEY = 'Escape';
   var FILE_TYPES = ['gif', 'jpg', 'jpeg', 'png'];
+  var MAX_SCALE = 100;
+  var MIN_SCALE = 25;
+  var SCALE_STEP = 25;
 
   var uploadFile = document.querySelector('#upload-file');
   var photoEditForm = document.querySelector('.img-upload__overlay');
   var miniPhotos = document.querySelectorAll('.effects__preview');
+  var scale = {
+    caption: document.querySelector('.scale__control--value'),
+    biggerButton: document.querySelector('.scale__control--bigger'),
+    smallerButton: document.querySelector('.scale__control--smaller')
+  };
 
 
   var photoEditFormElements = {
@@ -47,16 +55,54 @@
       reader.readAsDataURL(file);
     }
 
+    scale.caption.value = '100%';
     photoEditForm.classList.remove('hidden');
     document.querySelector('body').classList.add('modal-open');
     document.addEventListener('keydown', onPhotoEditorEscPress);
+    scale.biggerButton.addEventListener('click', onBiggerButton);
+    scale.smallerButton.addEventListener('click', onLessButton);
     makeEffect();
   };
 
+  var rescalePhoto = function (scaleCaption) {
+    if (scaleCaption !== MAX_SCALE) {
+      photoEditFormElements.imgUploadPreview.style.transform = 'scale(0.' + scaleCaption + ')';
+    } else {
+      photoEditFormElements.imgUploadPreview.style.transform = 'none';
+    }
+  }
+
+  var onBiggerButton = function () {
+    var currentScaleCaption = parseInt(scale.caption.value, 10);
+    if (currentScaleCaption < MAX_SCALE) {
+      currentScaleCaption = currentScaleCaption + 25;
+      rescalePhoto(currentScaleCaption);
+      scale.caption.value = currentScaleCaption + '%';
+    }
+  };
+
+  var onLessButton = function () {
+    var currentScaleCaption = parseInt(scale.caption.value, 10);
+    if (currentScaleCaption > MIN_SCALE) {
+      currentScaleCaption = currentScaleCaption - 25;
+      rescalePhoto(currentScaleCaption);
+      scale.caption.value = currentScaleCaption + '%';
+    }
+  };
+
+  // Закрытие формы
   var closePhotoEditor = function () {
     photoEditForm.classList.add('hidden');
-    document.removeEventListener('keydown', onPhotoEditorEscPress);
     document.querySelector('body').classList.remove('modal-open');
+
+    // Удаление слушателей событий на форме
+    document.removeEventListener('keydown', onPhotoEditorEscPress);
+    scale.biggerButton.removeEventListener('click', onBiggerButton);
+    scale.smallerButton.removeEventListener('click', onLessButton);
+    effectsList.forEach(function (el) {
+      el.removeEventListener('click', makeEffect);
+    });
+
     uploadFile.value = null;
   };
 
