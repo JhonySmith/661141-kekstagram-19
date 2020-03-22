@@ -141,13 +141,13 @@
   var effectsList = document.querySelectorAll('input[name=effect]');
   var effectLevel = document.querySelector('.img-upload__effect-level');
 
-  var effects = {
-    'none': {
+  var Effects = {
+    'NONE': {
       name: 'none',
       className: '',
       filterName: 'none'
     },
-    'chrome': {
+    'CHROME': {
       name: 'chrome',
       className: 'effects__preview--chrome',
       filterName: 'grayscale',
@@ -155,7 +155,7 @@
       valueMax: 1,
       unit: '',
     },
-    'sepia': {
+    'SEPIA': {
       className: 'effects__preview--sepia',
       filterName: 'sepia',
       valueMin: 0,
@@ -163,7 +163,7 @@
       valueMax: 1,
       unit: ''
     },
-    'marvin': {
+    'MARVIN': {
       name: 'marvin',
       className: 'effects__preview--marvin',
       filterName: 'invert',
@@ -171,7 +171,7 @@
       valueMax: 100,
       unit: '%'
     },
-    'phobos': {
+    'PHOBOS': {
       name: 'phobos',
       className: 'effects__preview--phobos',
       filterName: 'blur',
@@ -179,7 +179,7 @@
       valueMax: 3,
       unit: 'px'
     },
-    'heat': {
+    'HEAT': {
       name: 'heat',
       className: 'effects__preview--heat',
       filterName: 'brightness',
@@ -195,27 +195,27 @@
     switch (true) {
       case (effectsList[0].checked):
         effectLevel.style.visibility = 'hidden';
-        photoEditFormElements.imgUploadPreview.style.filter = effects.none.filterName;
+        photoEditFormElements.imgUploadPreview.style.filter = Effects.NONE.filterName;
         break;
       case (effectsList[1].checked):
         effectLevel.style.visibility = 'visible';
-        photoEditFormElements.imgUploadPreview.style.filter = effects.chrome.filterName + '(' + effectNumber + ')';
+        photoEditFormElements.imgUploadPreview.style.filter = Effects.CHROME.filterName + '(' + effectNumber + ')';
         break;
       case (effectsList[2].checked):
         effectLevel.style.visibility = 'visible';
-        photoEditFormElements.imgUploadPreview.style.filter = effects.sepia.filterName + '(' + effectNumber + ')';
+        photoEditFormElements.imgUploadPreview.style.filter = Effects.SEPIA.filterName + '(' + effectNumber + ')';
         break;
       case (effectsList[3].checked):
         effectLevel.style.visibility = 'visible';
-        photoEditFormElements.imgUploadPreview.style.filter = effects.marvin.filterName + '(' + effectNumber * effects.marvin.valueMax + effects.marvin.unit + ')';
+        photoEditFormElements.imgUploadPreview.style.filter = Effects.MARVIN.filterName + '(' + effectNumber * Effects.MARVIN.valueMax + Effects.MARVIN.unit + ')';
         break;
       case (effectsList[4].checked):
         effectLevel.style.visibility = 'visible';
-        photoEditFormElements.imgUploadPreview.style.filter = effects.phobos.filterName + '(' + effectNumber * effects.phobos.valueMax + effects.phobos.unit + ')';
+        photoEditFormElements.imgUploadPreview.style.filter = Effects.PHOBOS.filterName + '(' + effectNumber * Effects.PHOBOS.valueMax + Effects.PHOBOS.unit + ')';
         break;
       case (effectsList[5].checked):
         effectLevel.style.visibility = 'visible';
-        photoEditFormElements.imgUploadPreview.style.filter = effects.heat.filterName + '(' + effectNumber * effects.heat.valueMax + ')';
+        photoEditFormElements.imgUploadPreview.style.filter = Effects.HEAT.filterName + '(' + effectNumber * Effects.HEAT.valueMax + ')';
         break;
     }
   };

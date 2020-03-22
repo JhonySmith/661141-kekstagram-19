@@ -15,32 +15,31 @@
       tooLong: false
     };
 
-    for (var i = 0; i < hashtagsElements.length; i++) {
-      if (hashtagsElements[i][0] !== '#') {
+    hashtagsElements.forEach(function (el, i) {
+      if (el[0] !== '#') {
         sumValidation.haveHashtags = false;
       }
 
-      if (hashtagsElements[i] === '#') {
+      if (el === '#') {
         sumValidation.onlyHashtag = true;
       }
 
-      if (hashtagsElements[i].length > 20) {
+      if (el.length > 20) {
         sumValidation.tooLong = true;
       }
 
-      for (var j = 1; j < hashtagsElements[i].length; j++) {
-        if (hashtagsElements[i][j] === '#') {
+      for (var j = 1; j < el.length; j++) {
+        if (el[j] === '#') {
           sumValidation.noSpace = true;
         }
       }
 
-      for (var k = i + 1; k < hashtagsElements.length; k++) {
-        if (hashtagsElements[i].toLowerCase() === hashtagsElements[k].toLowerCase()) {
+      for (var k = i + 1; k < el.length; k++) {
+        if (String(el).toLowerCase() === String(hashtagsElements[k]).toLowerCase()) {
           sumValidation.repHas = true;
         }
       }
-
-    }
+    });
 
     if (!sumValidation.haveHashtags) {
       invalidText.push('Хэштэги должны начинаться с #');
