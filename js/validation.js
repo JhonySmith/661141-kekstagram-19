@@ -3,9 +3,9 @@
 (function () {
   var REG_EXP = /[$%&'*+/=?^_`{|}.,]/;
 
-  var checkingValidationHastags = function (hastags) {
-    var invalText = [];
-    var hashtagsElements = hastags.value.trim().split(/\s/);
+  var checkingValidationHashtags = function (hashtags) {
+    var invalidText = [];
+    var hashtagsElements = hashtags.value.trim().split(/\s/);
     var sumValidation = {
       haveHashtags: true,
       onlyHashtag: false,
@@ -43,40 +43,38 @@
     }
 
     if (!sumValidation.haveHashtags) {
-      invalText.push('Хэштэги должны начинаться с #');
+      invalidText.push('Хэштэги должны начинаться с #');
     }
     if (sumValidation.onlyHashtag) {
-      invalText.push('Хэштэги не могут состоять только из #');
+      invalidText.push('Хэштэги не могут состоять только из #');
     }
 
     if (sumValidation.noSpace) {
-      invalText.push('Хэштэги должны быть разделены пробелами');
+      invalidText.push('Хэштэги должны быть разделены пробелами');
     }
 
     if (hashtagsElements.length > 5) {
-      invalText.push('Нельзя указывать больше пяти хэш-тегов');
+      invalidText.push('Нельзя указывать больше пяти хэш-тегов');
     }
 
     if (sumValidation.tooLong) {
-      invalText.push('Максимальная длина одного хэш-тега 20 символов, включая решётку');
+      invalidText.push('Максимальная длина одного хэш-тега 20 символов, включая решётку');
     }
 
     if (sumValidation.repHas) {
-      invalText.push('Нельзя использовать повторяющиеся хэштэги');
+      invalidText.push('Нельзя использовать повторяющиеся хэштэги');
     }
 
-    if (REG_EXP.test(hastags.value)) {
-      invalText.push('Нельзя использовать спецсимволы');
+    if (REG_EXP.test(hashtags.value)) {
+      invalidText.push('Нельзя использовать спецсимволы');
     }
 
-    if (invalText.length !== 0) {
-      return invalText.join('. \n');
-    } else {
-      return '';
-    }
+    var result = invalidText.length ? invalidText.join('. \n') : '';
+    return result;
+
   };
 
   window.validation = {
-    checkingValidationHastags: checkingValidationHastags
+    checkingValidationHashtags: checkingValidationHashtags
   };
 }());

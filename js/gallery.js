@@ -1,6 +1,8 @@
 'use strict';
 
 (function () {
+  var DELAY_TIME = 500;
+  var RANDOM_PHOTO_NUMBER = 10;
 
   var picturesBlock = document.querySelector('.pictures');
   var photoTemplate = document.querySelector('#picture').content.querySelector('.picture');
@@ -20,30 +22,28 @@
     });
   };
 
-  var onDefaultButton = function () {
+  var setDelayLoad = function (loadTarget) {
     if (lastTimeout) {
       window.clearTimeout(lastTimeout);
     }
     lastTimeout = window.setTimeout(function () {
       clearAllPhotos();
-      window.backend.load(successHandler);
-    }, 500);
+      window.backend.load(loadTarget);
+    }, DELAY_TIME);
+  };
+
+  var onDefaultButton = function () {
+    setDelayLoad(onSuccess);
   };
 
   var getRandomPhotos = function (forRandomArr) {
     var arrRandom = window.data.shuffle(forRandomArr);
-    arrRandom.splice(10, forRandomArr.length - 10);
+    arrRandom.splice(RANDOM_PHOTO_NUMBER, forRandomArr.length - RANDOM_PHOTO_NUMBER);
     photoRender(arrRandom);
   };
 
   var onRandomButton = function () {
-    if (lastTimeout) {
-      window.clearTimeout(lastTimeout);
-    }
-    lastTimeout = window.setTimeout(function () {
-      clearAllPhotos();
-      window.backend.load(getRandomPhotos);
-    }, 500);
+    setDelayLoad(getRandomPhotos);
   };
 
   var getDiscussedPhotos = function (forDiscussedArr) {
@@ -53,22 +53,15 @@
         return 1;
       } else if (left.comments.length > right.comments.length) {
         return -1;
-      } else {
-        return 0;
       }
+      return 0;
+
     });
     photoRender(discussedArr);
   };
 
   var onDiscussedButton = function () {
-    if (lastTimeout) {
-      window.clearTimeout(lastTimeout);
-    }
-
-    lastTimeout = window.setTimeout(function () {
-      clearAllPhotos();
-      window.backend.load(getDiscussedPhotos);
-    }, 500);
+    setDelayLoad(getDiscussedPhotos);
   };
 
   var photoRender = function (renderArr) {
@@ -92,12 +85,12 @@
     window.preview.onGalleryPhoto(mainPictures, renderArr);
   };
 
-  var successHandler = function (photo) {
+  var onSuccess = function (photo) {
     photoRender(photo);
     photoFilters.classList.remove('img-filters--inactive');
   };
 
-  window.backend.load(successHandler);
+  window.backend.load(onSuccess);
 
   filterButtons.default.addEventListener('click', onDefaultButton);
   filterButtons.random.addEventListener('click', onRandomButton);

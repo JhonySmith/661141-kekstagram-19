@@ -15,7 +15,7 @@
     biggerButton: document.querySelector('.scale__control--bigger'),
     smallerButton: document.querySelector('.scale__control--smaller')
   };
-
+  var mainSection = document.querySelector('main');
 
   var photoEditFormElements = {
     close: photoEditForm.querySelector('.img-upload__cancel'),
@@ -39,6 +39,7 @@
     loadFile();
 
     scale.caption.value = '100%';
+    photoEditFormElements.imgUploadPreview.style.transform = 'none';
     photoEditForm.classList.remove('hidden');
     document.querySelector('body').classList.add('modal-open');
     document.addEventListener('keydown', onPhotoEditorEscPress);
@@ -117,8 +118,8 @@
 
   photoEditFormElements.hashtags.addEventListener('input', function (evt) {
     var target = evt.target;
-    if (window.validation.checkingValidationHastags(photoEditFormElements.hashtags) !== '') {
-      target.setCustomValidity(window.validation.checkingValidationHastags(photoEditFormElements.hashtags));
+    if (window.validation.checkingValidationHashtags(photoEditFormElements.hashtags) !== '') {
+      target.setCustomValidity(window.validation.checkingValidationHashtags(photoEditFormElements.hashtags));
     } else {
       target.setCustomValidity('');
     }
@@ -306,7 +307,7 @@
     var fragment = document.createDocumentFragment();
     var successElement = successSendTemplate.cloneNode(true);
     fragment.appendChild(successElement);
-    document.querySelector('main').appendChild(fragment);
+    mainSection.appendChild(fragment);
 
     document.addEventListener('keydown', onSuccessMessageEscPress);
     document.addEventListener('click', onSuccessMessageMissClick);
@@ -320,7 +321,7 @@
     var fragment = document.createDocumentFragment();
     var errorElement = errorSendTemplate.cloneNode(true);
     fragment.appendChild(errorElement);
-    document.querySelector('main').appendChild(fragment);
+    mainSection.appendChild(fragment);
 
     document.addEventListener('keydown', onErrorMessageEscPress);
     document.addEventListener('click', onErrorMessageMissClick);

@@ -3,7 +3,10 @@
 (function () {
   var ESC_KEY = 'Escape';
   var ENTER_KEY = 'Enter';
+  var COMMENTS_STEP = 5;
+  var COMMENTS_START = 5;
   var photosArr;
+  var bodySection = document.querySelector('body');
   // Окно просмотра
   var previewWindow = document.querySelector('.big-picture');
 
@@ -31,7 +34,7 @@
   // Функция открытия окна
   var openBigPicture = function () {
     previewWindow.classList.remove('hidden');
-    document.querySelector('body').classList.add('modal-open');
+    bodySection.classList.add('modal-open');
     document.addEventListener('keydown', onBigPictureEscPress);
     commentsLoader.addEventListener('click', onCommentsLoader);
   };
@@ -40,8 +43,8 @@
   var closeBigPicture = function () {
     previewWindow.classList.add('hidden');
     document.removeEventListener('keydown', onBigPictureEscPress);
-    document.querySelector('body').classList.remove('modal-open');
-    commentsNumber = 5;
+    bodySection.classList.remove('modal-open');
+    commentsNumber = COMMENTS_START;
     preview.commentsLoader.classList.remove('hidden');
     commentsLoader.removeEventListener('click', onCommentsLoader);
   };
@@ -63,11 +66,11 @@
   preview.commentTextAdd.addEventListener('blur', onBlurField);
   preview.commentTextAdd.addEventListener('focus', onFocusField);
 
-  var commentsNumber = 5;
+  var commentsNumber = COMMENTS_START;
   var commentsLoader = document.querySelector('.comments-loader');
 
   var onCommentsLoader = function () {
-    commentsNumber = commentsNumber + 5;
+    commentsNumber = commentsNumber + COMMENTS_STEP;
     commentLoad(photosArr, commentsNumber);
   };
 
